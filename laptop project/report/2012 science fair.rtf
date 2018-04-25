@@ -1,0 +1,91 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sa200\sl276\slmult1\lang9\f0\fs22 ideas\par
+Low voltage operating chip "watchdog" to shut down at low voltages (could use low voltage 3 volt 28x2)\par
+\i later comments: I used calibadc to read the voltage on startup and warn the user if the voltage is too low.\i0\par
+non IBM PC compatible no  IBM PC compatible parts (completely original)\par
+hi2cout to enable i\super 2\nosupersub c for keyboard, storage, ect.  i2c is an alternative for PCI/PCIe found in most computers.  Iimproved efficiency  due to using i\super 2\nosupersub c function built into the hardware as opposed doing it with software (bit banging).\par
+light/distance sensor to detect closing of case\par
+switch with transistors to disable all non programming pins (for programming)\par
+use indicator LED's\par
+use multiple slots of 28x2 cpu to have up to four operating systems  e.g. sd card;  non-sd card functions; one reserved for future use; one for diagnostic purposes.\par
+clear case so people can see internal electronics\par
+organize the files on the computer in a hierarchical file system rather than a sinjgle level file system    you may then organize files by their purpose or type  e.g. system, data, logs, etc. \par
+\par
+\par
+Log\par
+12/24/12  worked on basic microcontroller requirements (programming and power)\par
+Setting up hardware hi2c out to enable i2c (for keyboard, storage, etc.)\par
+Planned and added switch to reset pin with resistor.  Added pull-up resistor.\par
+12/26 Need SD card reader/writer to improve capacity to potentially allow communication between my laptop and other computers\par
+12/28  Trying to find plain file editor (not plain text)\par
+1/5  reading manual for alfat and card reader board, needs 3.3 volts so will need to have a voltage regulator from 4.5 to 3.3 volts. \par
+\i later comments: instead of using a voltage regulator I used 3 batteries in series with the contacts of each acsesable I got 3 volts directly for 2 of the batteries for the alfat board.\i0\par
+ Since you can't choose and edit any part of a file when you choose a file it will load it into RAM (possible external FRAM and after the edits have been made give options to save the file or discard the changes. \i  \par
+I am using the sd card reader for all data storage so do not need the FRAM.\par
+\i0 1/12   soldered connections for power and programming for both CPU and keyboard.\par
+1/14 continued to solder basic connections,  then tested followed by debugging for two plus hours.  Wrote test program to blink LED from main processor.  \par
+1/18 -   2.5 battery case wires broke so replaced with 3 individual AA battery boxes on separate stripboard for increased durability and selectable voltage of 1.5,3, and 4.5 volts.  Debugged and successfully fixed (there was a problem with the programming connector) the PICAXE 2.8X2 keyboard processor.  Added keyboard connector and successfully got keyboard.  I wrote and tested a program allowing the keyboard processor to sent keyboard data to the main processor.\par
+1/20 - 2/1  Constructed case.\par
+2/2  connected screen.  Did several tests/demo programs.  Display all possible characters on\par
+screen; display characters, number and symbol for character typed on keyboard.  Display typed symbols on screen sequentially in text editor fashion.  (like Pages, Word, etc.)  Changed decoding code to display correct symbols.  Entered key identifying function into keyboard controller to free up processsing of CPU\par
+.2/4  decreased code size from 1064 bytes to 832 with optimization of menu structure.\par
+2/7 Added functionality for sleep mode in both CPU and keyboard with keyboard waking up CPU when wake up key pressed on keyboard.  Drilled holes on case to allow for external programming while in case.\par
+2/8 Added circuit for sd card reader; successfully interfaced with sd card reader and received its version number through i\super 2\nosupersub c (as a basic test of whether it could read it or not)\par
+2/09  Created filoe hello world.txt, successfully read it from sd card reader; I set sd card reader to read 80 characters (the size of the display) with spaces for any unused characters instead of being the exact number of characters on the document.\par
+2/10  Organized files on  in a hierarchical file system rather than a single level file system.\par
+2/11 SD read:  the sd read routine reads one page of the file and allows it to create a shortcut from the menu or input it with typing (or any other way I program )instead of having a separate program everytime you need to read a fie.\par
+2/12  The sd writing program occasionally frooze.   Set it to  Sertxd (send data to computer) to see where a program froze.  I identified that the keyboard uc was functioning properly since kb still blinked LED's and when I set main uc to Sertxd the value from the keyboard lead it would return proper value and would not return any value if it was frozen. \par
+ I added method to go to any file on the drive with file path.  Writing code for ad rad set up.  Theoretically I could put any file on it and it would read it.\par
+2/16  When I was debugging \par
+\par
+2/18  Added capitalization by programming the keyboard monitor so when shift key is pressed a bit variable called shift is set to equal one and when this variable is set to one the microcontroller reads the value of the key to convert it to the correct character from its internal storage (called EEPROM) and then sets the variable shift to zero.  It functions similarly to an iPhone when shift is pressed the next key is capitalized and then goes back touncapitalized.  It functions similarly to caplock but toggles the bit each time cap lock is pressed.\par
+2/19  I modified the file listing function to display files in an easy to read format, showing the ``````````````````````file name,it's  attributes( e.g. read only, hidden, etc.), and the file's size. \par
+\i The sd read reoutine reads one page worth of the file ande allows it to create a shortcut from the nmenu or input it with typing (or any other way I program) instead of having a separate program everytime you need to read a file.\par
+\i0 I added function to read the power supply voltage (battery level) using the calib adc command and some math.  I am now able to read the voltage with 100 milliamp resolution without a multimeter ( no longer need to open case to test batteries).\par
+2/20 added function to check power supply on start up and warn if it was low.  Fixed code to remove unnecessary characters from sd card reads.  Worked on single character sd card reads allowing for enter, tab, etc.\par
+2/21  Working on making the program execution by over-clocking the frequency to 16 Mhz instead of the default 8 Mhz.  Need to change the commands that require specific timing such as pause, hhitc set up, serout. \i  I realized I only have to use some symbol that will be assigned a different value depending on thefrequency defined.  I can't set fequency higher though I could use an external resonater pf up to 6hz.    Serial communication speed for screen would be too fast.  I am not working on this now as the screen seemed to be unable to keep up with the cpu, in the future I will try to overclock the screen so it can keep up.\par
+\i0 I added function to save contents of the display when using word edit, when a user presses print screen on the keyboard.  Now it is possible to write to the sd card. \par
+2/24  In word edit I added a function to support tab key.\par
+\par
+List of supplies:\par
+serial 20x4 OLED display  $30.00  (cheap alternative serial LCD: $9.00)\par
+picaxe 28X2 microcontroller (2)   $6.80 ea.\par
+plain stripboards (perfboard) (3 - 4)  $1.50 ea.\par
+single AA battery holder (3)  $1.09 ea.\par
+Alfat SD card reader  $44.95\par
+resistors (22k (2), 10k (2), 4.7k (2) negligible ($10.00 for 500 pieces)\par
+various wires  (negligible)\par
+ps2 keyboard  $5.00\par
+ps2 stripboard adaptor $.95\par
+power switch $1.00\par
+sd card  (up to 32 GB)  (lower capacity acceptable) $6.95 for 2 GB  $15.00 for 16 GB\par
+programming adaptor (headphone jack) $.10\par
+\par
+Optional Supplies:\par
+decoupling capacitors(3) (highly recommended) $0.10\par
+ethernet cable/adaptor (communication between top and bottom halves of laptop) (use wires if not using this) ( free sample from molex.com)\par
+indicator LEDs (2)  $.09 ea,\par
+case (material of your choice eg. wood/plastic) $10.00 and up\par
+200 ohm resistors (for indicator LEDs)  (2) negligible\par
+extension cable (to program without opening case) $0.97\par
+\par
+entry level:  $89.10\par
+full version:  $129.26\par
+\par
+Procedure\par
+Ordered componets \par
+Constructed case from plastic sheets and blocks. \par
+Draw a stripboard diagram using PEBBLE (PICAXE Electronic BreadBoard Emulator)\par
+Solder the PICAXE microcontrollers and programming connectors and tested circuit, with program to blink an LED, hardware was not found.  After several tests I discovered that the programming connectors made an intermittant connection and needed resoldering.  \par
+Solder the data and clock lines of the i\super 2\nosupersub c bus connecting the PICAXE 28 x2 CPU and the 2 x2 keyboard monitor.   \par
+Soldered keyboard adaptor, first keyboard didn't work so ordered another as a replacement.  The native ps2 keyboard from our old computer works.\par
+Battery cables broke so decided to make a more durable and efficient power supply.\par
+\par
+\par
+\par
+conclusion  notes\par
+    SD card related operating system functions:  read from sd card, read files on sd card, write to sd card, \par
+ \i  \i0 I have the idea to allow background programs/processes. e.g. timer, etc. by designating some variables for background processing separately from the active program varibles (RAM)\i\par
+\i0\par
+}
+ 

@@ -1,0 +1,156 @@
+Homemade Computer:
+Creating an affordable
+computer using 
+unconventional computer components
+by Patrick Leiser
+
+Problem:
+Computers are expensive.  It would be good to have computers that are affordable for everyone.  Two methods to make them more affordable are to use less expensive, non-computer components, and to make them yourself while customizing the components and writing software to fit your needs.
+
+Hypotheses:
+It will be possible to construct a (non-IBM PC compatible) computer using non-computer components (such as a $7.00 microcontroller for the CPU), and to write an operating system for the required functions, including word processing, calculations, and games.
+
+Ideas:
+Low voltage operating chip "watchdog" to shut down at low voltages (could use low voltage 3 volt 28x2)                                                                                                                                    later comments: I used calibadc to read the voltage on startup and warn the user if the voltage is too low.
+non IBM PC compatible no IBM PC compatible parts (completely original) 
+hi2cout to enable i2c for keyboard, storage, etc. i2c is an alternative for PCI/PCIe found in most computers.  Improved efficiency due to using i2c function built into the hardware as opposed doing it with software (bit banging).
+light/distance sensor to detect closing of case 
+switch with transistors to disable all non programming pins (for programming)                          not necessary
+use indicator LED's
+use multiple slots of 28x2 CPU to have up to four operating systems e.g. SD card; non-SD card functions; one reserved for future use; one for diagnostic purposes. not necessary (yet)
+clear case so people can see internal electronics
+organize the files on the computer in a hierarchical file system rather than a single level file system you may then organize files by their purpose or type e.g. system, data, logs, etc. 
+
+Procedure:
+order components
+
+draw stripboard diagram
+
+construct case
+
+solder components onto stripboard 
+
+test (circuits) 
+
+write programs and test (for CPU, keyboard monitor, and screen)
+
+
+List of supplies:
+serial 20x4 OLED display $30.00 (cheap alternative serial LCD: $9.00)
+PICAXE 28X2 microcontroller (2) $6.80 ea.
+plain stripboards (perfboard) (3 - 4) $1.50 ea.
+single AA battery holder (3) $1.09 ea.
+Alfat SD card reader $44.95
+resistors (22k (2), 10k (2), 4.7k (2) negligible ($10.00 for 500 pieces)
+various wires (negligible)
+PS/2 keyboard $5.00
+PS/2 stripboard adaptor $0.95
+power switch $1.00
+SD card (up to 32 GB) (lower capacity acceptable) $6.95 for 2 GB $15.00 for 16 GB
+programming adaptor (headphone jack) $0.10
+
+Optional Supplies:
+decoupling capacitors(3+) (highly recommended) $0.10
+ethernet cable/adaptor (communication between top and bottom halves of laptop) (use wires if not using this) ( free sample from molex.com) or this one from sparkfun https://www.sparkfun.com/products/643 with https://www.sparkfun.com/products/716
+indicator LEDs (2) $0.09 ea.
+case (material of your choice e.g.. wood/plastic) $10.00 and up
+200 ohm resistors (for indicator LEDs) (2) negligible
+extension cable (to program without opening case) $0.97
+entry level: $89.10
+full version: $129.26
+
+
+Results:
+
+Constructed case from clear plastic sheets blocks, and metal screws to allow people to see the electronics inside and be easy to take apart to access the electronics to add new features or repair damaged parts.  
+Drew a stripboard diagram using PEBBLE (PICAXE Electronic BreadBoard Emulator)
+Soldered the PICAXE microcontrollers and programming connectors and tested circuit, with program to blink an LED, hardware was not found.  After several tests I discovered that the programming connectors had an intermittent connection and needed resoldering.  
+Soldered the data and clock lines of the i2c bus connecting the PICAXE 28X2 CPU and the 28X2 keyboard monitor.   
+Wrote and tested a program allowing the keyboard processor to sent keyboard data to the main processor.
+Soldered keyboard adaptor, first keyboard didn't work so ordered another as a replacement.  The native PS/2 keyboard from our old computer works.
+The battery cables broke so I decided to make a more durable and efficient power supply, I replaced it with 3 individual AA battery boxes on separate stripboard for increased durability and selectable voltage of 1.5, 3, and 4.5 volts
+Connected display and wrote test programs, combined tests to create foundation for PLOS. Did several tests and demo programs.  Display all possible characters on screen; display characters, number and symbol for character typed on keyboard.  Display typed symbols on screen sequentially in text editor fashion.  (like Pages, Word, etc.)  Changed decoding code to display correct symbols.  Entered key identifying function into keyboard controller to free up processing of CPU. Combined tests to form foundation for PLOS. (Patrick Leiser Operating System).
+Added circuit for SD card reader; successfully interfaced with SD card reader and received its version number through i2c (as a basic test of whether it could read it or not).
+Created file hello world.txt, successfully read it from SD card reader.
+Organized files on in a hierarchical file system rather than a single level file system.
+Added method to go to any file on the drive with file path by sending the start of the command hi2cout [alfat],("O 0R>M:",92) (92 is equivalent to \ (backslash)) and inputting the rest of the command as the keyboard keys come in.  Wrote code for sdreadsetup, I can enter the name of any file and it would read it.
+Added capitalization by programming the keyboard monitor so when shift key is pressed a bit variable called shift is set to equal one and when this variable is set to one the microcontroller reads the value of the key to convert it to the correct character from its internal storage (called EEPROM) and then sets the variable shift to zero.  It functions similarly to an iPhone when shift is pressed the next key is capitalized and then goes back to uncapitalized.  It functions similarly to caps lock but toggles the bit each time cap lock is pressed.
+Working on making the program execution faster by over-clocking the frequency to 16 MHz instead of the default 8 MHz.  Need to change the commands that require specific timing such as pause, hi2csetup, serout.  I realized I only have to use some symbol that will be assigned a different value depending on the frequency defined.  I can't set frequency higher though I could use an external resonator Frequency up to 64 MHz.    Serial communication speed for screen would be too fast.  I am not working on this now as the screen seemed to be unable to keep up with the CPU, in the future I will try to over clock the screen so it can keep up.
+Modified the file listing function to display files in an easy to read format, showing the file name, it's attributes ( e.g. read only, hidden, etc.), and the file's size. 
+Added a function to read the power supply voltage (battery level) using the calibadc command.
+Worked on single character SD card reads allowing for enter, tab, etc.
+Added speakers to the laptop.
+Added calculator functionality with allowing for multi-step equations and integers up to 65,535
+Modified keyboard program to accept separate keys instantly but now allow a single key press to count as more than one by immediately after receiving a key reading the keyboard for a fraction of a keyboard to check if that key is still pressed, if it is repeat checking until it has been released, otherwise accept the pressed key immediately.
+
+
+
+
+
+
+Log:
+12/20 Constructed case 
+12/24/2012 worked on basic microcontroller requirements (programming and power)
+Setting up hardware hi2c out to enable i2c (for keyboard, storage, etc.)
+Planned and added switch to reset pin with resistor.  Added pull-up resistor.
+12/26 Need SD card reader/writer to improve capacity to potentially allow communication between my laptop and other computers
+12/28 Trying to find plain file editor (not plain text) I am using synalyse it, a hex editor I found.
+1/5/2013 reading manual for alfat and card reader board, it needs 3.3 volts so will need to have a voltage regulator from 4.5 to 3.3 volts. 
+later comments: instead of using a voltage regulator I used 3 batteries in series with the contacts of each accessible I got 3 volts directly from 2 of the batteries for the alfat board.
+ Since you can't choose and edit any part of a file when you choose a file it will load it into RAM (possible external FRAM and after the edits have been made give options to save the file or discard the changes.  
+I am using the SD card reader for all data storage so do not need the FRAM.
+1/12 soldered connections for power and programming for both CPU and keyboard.
+1/14 continued to solder basic connections, then tested followed by debugging for two plus hours.  Wrote test program to blink LED from main processor.  
+1/18 Battery case wires broke so replaced with 3 individual AA battery boxes on separate stripboard for increased durability and selectable voltage of 1.5, 3, and 4.5 volts.  Debugged and successfully fixed (there was a problem with the programming connector) the PICAXE 2.8X2 keyboard processor.  Added keyboard connector and successfully got keyboard.  I wrote and tested a program allowing the keyboard processor to sent keyboard data to the main processor.
+2/2 connected display.  Did several tests and demo programs.  Display all possible characters on screen; display characters, number and symbol for character typed on keyboard.  Display typed symbols on screen sequentially in text editor fashion.  (like Pages, Word, etc.)  Changed decoding code to display correct symbols.  Entered key identifying function into keyboard controller to free up processing of CPU. Combined tests to form foundation for PLOS. (Patrick Leiser Operating System)
+2/4 decreased code size from 1064 bytes to 832 with optimization of menu structure by using branch with keynum (determined by keyboard processor) instead of select case to choose the raw value representing that number.
+2/5  Attempted to add calculator but discontinued due to overcomplexity and using too much memory.
+2/7 Added functionality for sleep mode in both CPU and keyboard with keyboard waking up CPU when wake up key pressed on keyboard.  Drilled holes on case to allow for external programming while in case.
+2/8 Added circuit for SD card reader; successfully interfaced with SD card reader and received its version number through i2c (as a basic test of whether it could read it or not)
+2/09 Created file hello world.txt, successfully read it from SD card reader; I set SD card reader to read 80 characters (the size of the display) with spaces for any unused characters instead of being the exact number of characters on the document.
+2/10 Organized files on in a hierarchical file system rather than a single level file system.
+2/11 SD read: the SD read routine reads one page of the file and allows it to create a shortcut from the menu or input it with typing (or any other way I program) instead of having a separate program every time you need to read a file.
+ I added method to go to any file on the drive with file path.  Writing code for SD read set up.  Theoretically I could put any file on it and it would read it.
+2/12 The SD writing program occasionally froze.   Set it to Sertxd (send data to computer) to see where a program froze.  I identified that the keyboard microcontroller was functioning properly since the Keyboard still blinked LED's and when I set main microcontroller to Sertxd the value from the keyboard lead it would return proper value and would not return any value if it was frozen. I then found that if I added a pause 100 (0.1 seconds) then it would not freeze.
+
+2/18 Added capitalization by programming the keyboard monitor so when shift key is pressed a bit variable called shift is set to equal one and when this variable is set to one the microcontroller reads the value of the key to convert it to the correct character from its internal storage (called EEPROM) and then sets the variable shift to zero.  It functions similarly to an iPhone when shift is pressed the next key is capitalized and then goes back to uncapitalized.  It functions similarly to caps lock but toggles the bit each time cap lock is pressed.
+2/19 I modified the file listing function to display files in an easy to read format, showing the file name, it's attributes ( e.g. read only, hidden, etc.), and the file's size. 
+I added a function to read the power supply voltage (battery level) using the calibadc command and some math.  I am now able to read the voltage with 100 milliamp resolution without a multimeter ( no longer need to open case to test batteries).
+2/20 added function to check power supply on start up and warn if it was low.  Fixed code to remove unnecessary characters from SD card reads.  Worked on single character SD card reads allowing for enter, tab, etc.
+2/21 Working on making the program execution faster by over-clocking the frequency to 16 MHz instead of the default 8 MHz.  Need to change the commands that require specific timing such as pause, hi2csetup, serout.  I realized I only have to use some symbol that will be assigned a different value depending on the frequency defined.  I can't set frequency higher though I could use an external resonator Frequency up to 64 MHz.    Serial communication speed for screen would be too fast.  I am not working on this now as the screen seemed to be unable to keep up with the CPU, in the future I will try to over clock the screen so it can keep up.
+I added function to save contents of the display when using word edit, when a user presses print screen on the keyboard.  Now it is possible to write to the SD card. 
+2/24 In word edit I added a function to support the tab key.
+2/25 Added speakers to the laptop, I wrote a program to play first built in music.  
+2/26 When reassembling the laptop after adding the speakers, and programming the main program (PLOS), the screen displayed the start up message (“PLOS starting up, designed built and programmed by Patrick Leiser”).  When taking it apart to solve the problem I noticed that the ethernet connector (what I used to connect the top and lower screen, was damaged, and so I ordered another one (of hopefully a more durable type) from Sparkfun (www.sparkfun.com).
+3/1 I desoldered the old (damaged) connectors in preparation for new replacement connectors (scheduled to arrive today).
+3/3 I optimized the code and managed to cut off 200 bytes by removing unused parts and improving other code.
+3/4 Added square root functionality to calculator.
+3/5 Added calculator functionality with allowing for multistage equations and integers up to 65,535.
+3/18 I added a random number generator used by entering calculator and using operator “r” 
+3/19 Removed keyboard LED blinking to minimize key receiving delay (previously took 0.5 seconds between keys). Needs modification as one key press now registers as up to 10.
+3/20 Modified keyboard program to accept separate keys instantly but now allow a single key press to count as more than one by immediately after receiving a key reading the keyboard for a fraction of a keyboard to check if that key is still pressed, if it is repeat checking until it has been released, otherwise accept the pressed key immediately.
+
+
+
+
+
+
+Conclusion:
+	In conclusion it is possible to construct a computer and operating system using cheap, non computer components 3), that I designed, built, and programmed myself. The PICAXE 28X2     microcontroller (http://www.picaxe.com/Hardware/PICAXE-Chips/PICAXE-28X2-microcontroller/) worked well as an inexpensive CPU. I successfully programmed it to support a word processor (that I named Wordedit), full writing and reading of .txt files from the SD card (including files added to the SD card by other computers). It also has a calculator allowing addition, subtraction, multiplication, and division. It has a i2c bus that acts like the PCI and PCIe buses on normal computers.
+Insights into the code:
+The SD read subroutine reads one page worth of the file and allows it to create a shortcut from the menu or input it with typing (or any other way I program) instead of having a separate program every time you need to read a file.
+now it reads one character at a time (instead of a page) and detects the end of the display separately to allow it to support enter, tab, etc. 
+decreased code size from 1064 bytes to 832 with optimization of menu structure by using branch with keynum (determined by keyboard processor) instead of select case to choose the raw value representing that number.
+Added method to go to any file on the drive with file path by sending the start of the command hi2cout [alfat],("O 0R>M:",92) (92 is equivalent to\ (backslash)) and inputting the rest of the command as the keyboard keys come in.
+Position: The position subroutine allows me to display things on the screen in a logical order (the default for these displays is first line, third line, blank space, second line, fourth line).  By keeping track of the position of the display and allowing me to do things such as go down a line, go up a line, go left one character, go right one character, go to beginning of next line (like enter), go four spaces into a line (tab), and go to any particular place on the screen, all with simple commands such as cursorcol = 1, cursorrow = 5, gosub position (second (0 is first) position on a column, sixth position on a row (alternative command is serout C.1, N2400, (254,198))) or       inc cursorcol, cursorrow = 0 gosub position (next row, first position (no alternative command)).
+Early on in my project I tried to add a calculator.  At the time I tried to have each function select the number of the key manually and used a menu at the beginning to select addition, subtraction, multiplication, and division.  I gave up soon after starting after observing that it was too inefficient and would take all of the memory left in the microcontroller to implement.  Recently I retried the calculator code starting from scratch.  This time I used the variable keynum that is received from the keyboard monitoring chip to transmit the numerical value of the number keys and had the user select addition, subtraction, multiplication, division, or square root by simply pressing the corresponding key.  Now I have a simple, logical and easy to use calculator with the improved calculator code while only taking 400 bytes.
+
+
+Bibliography:
+“PICAXE MANUAL 2”, Revolution Education Ltd., http://www.picaxe.com/docs/picaxe_manual2.pdf
+“PICAXE Forum” Revolution Education Ltd., http://www.picaxeforum.oom
+“DIY Laptop v2” Chris Fenton, http://www.chrisfeton.com/diy-laptop-v2
+“Serial OLED Code” Revolution Education Ltd., http://www.picaxe.com/downloads/axe134y.bas.txt
+“Basic Commands” Revolution Education Ltd., http://www.picaxe.com/BASIC-commands
+Ron Hackett, PICAXE Projects for the Evil Genius (McGraw Hill, 2011)
+“Alfat user manual” GHI Electronics, http://www.ghielectronics.com/downloads/ALFAT/ALFAT%20SoC%20Processor%20User%20Manual.pdf

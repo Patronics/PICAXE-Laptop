@@ -1,0 +1,1 @@
+startup music:d=4,o=6,b=203:8c,8d,8e,8f,8g,d,8a
